@@ -1,0 +1,6 @@
+@WebApiRZHD_HostAddress = http://localhost:5022
+
+GET {{WebApiRZHD_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

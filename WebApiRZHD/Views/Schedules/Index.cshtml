@@ -1,0 +1,65 @@
+﻿@model IEnumerable<WebApiRZHD.Models.Schedule>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Departure_date_time)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Arrival_date_time)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Number_of_available_seats)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket_price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Arrival_stationNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Departure_stationNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Departure_date_time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Arrival_date_time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Number_of_available_seats)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ticket_price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Arrival_stationNavigation.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Departure_stationNavigation.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
