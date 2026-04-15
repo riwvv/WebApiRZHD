@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApiRZHD.DTOs;
 using WebApiRZHD.Models;
@@ -32,5 +33,40 @@ public class SchedulesController : ControllerBase {
         return Ok(responseDTO);
     }
 
-
+    [HttpPost]
+    public async Task<ActionResult<IEnumerable<ScheduleDTO>>> GetSchedulesByInfo([FromBody] ScheduleDTO scheduleDTO, [FromQuery] DateTime? returnDate = null) {
+        var ds = await _context.Stations.FirstOrDefaultAsync(x => x.Name == scheduleDTO.Departure_station);
+        var ass = await _context.Stations.FirstOrDefaultAsync(x => x.Name == scheduleDTO.Arrival_station);
+        if (ds == null || ass == null)
+            return BadRequest();
+        var result = await _context.Schedules.Where(x => x.Number_of_available_seats > 0 && x.Departure_station == ds.Id && x.Arrival_station == ass.Id && x.Departure_date_time.Date == scheduleDTO.Departure_date_time.Date).ToListAsync();
+        var resultDTO = new List<ScheduleDTO>();
+        if (returnDate == null) {
+            foreach (var item in result) {
+                resultDTO.Add(new ScheduleDTO {
+                    Id = item.Id,
+                    Departure_station = item.Departure_stationNavigation.Name,
+                    Arrival_station = item.Arrival_stationNavigation.Name,
+                    Number_of_available_seats = item.Number_of_available_seats,
+                    Ticket_price = item.Ticket_price,
+                    Departure_date_time = item.Departure_date_time,
+                    Arrival_date_time = item.Arrival_date_time
+                });
+            }
+            return Ok(resultDTO);
+        }
+        result.AddRange(await _context.Schedules.Where(x => x.Number_of_available_seats > 0 && x.Departure_date_time.Date == returnDate.Value.Date && x.Departure_station == ass.Id && x.Arrival_station == ds.Id).ToListAsync());
+        foreach (var item in result) {
+            resultDTO.Add(new ScheduleDTO {
+                Id = item.Id,
+                Departure_station = item.Departure_stationNavigation.Name,
+                Arrival_station = item.Arrival_stationNavigation.Name,
+                Number_of_available_seats = item.Number_of_available_seats,
+                Ticket_price = item.Ticket_price,
+                Departure_date_time = item.Departure_date_time,
+                Arrival_date_time = item.Arrival_date_time
+            });
+        }
+        return Ok(resultDTO);
+    }
 }

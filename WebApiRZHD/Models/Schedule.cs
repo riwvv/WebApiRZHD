@@ -21,7 +21,7 @@ public partial class Schedule
     public int Number_of_available_seats { get; set; }
 
     public decimal Ticket_price { get; set; }
-    
+
     [JsonIgnore]
     public virtual Station Arrival_stationNavigation { get; set; }
 

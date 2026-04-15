@@ -11,7 +11,7 @@ public partial class Station
     public int Id { get; set; }
 
     public string Name { get; set; }
-
+    
     [JsonIgnore]
     public virtual ICollection<Schedule> ScheduleArrival_stationNavigations { get; set; } = new List<Schedule>();
 
