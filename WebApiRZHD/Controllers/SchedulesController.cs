@@ -69,4 +69,26 @@ public class SchedulesController : ControllerBase {
         }
         return Ok(resultDTO);
     }
+
+    [HttpPost("new")]
+    public async Task<ActionResult<ScheduleDTO>> CreateSchedule([FromBody] ScheduleDTO schedule) {
+        int newId = (await _context.Schedules.ToListAsync()).Max(x => x.Id);
+        var newSchedule = new Schedule {
+            Id = newId + 1,
+            Departure_station = (await _context.Stations.FirstOrDefaultAsync(x => x.Name == schedule.Departure_station))!.Id,
+            Arrival_station = (await _context.Stations.FirstOrDefaultAsync(x => x.Name == schedule.Arrival_station))!.Id,
+            Departure_date_time = schedule.Departure_date_time,
+            Arrival_date_time = (DateTime)schedule.Arrival_date_time!,
+            Number_of_available_seats = (int)schedule.Number_of_available_seats!,
+            Ticket_price = (decimal)schedule.Ticket_price!
+        };
+        try {
+            _context.Add(newSchedule);
+            await _context.SaveChangesAsync();
+            return StatusCode(204, schedule);
+        }
+        catch (Exception ex) {
+            return BadRequest(ex.Message);
+        }
+    }
 }
